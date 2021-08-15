@@ -35,6 +35,7 @@ def unicode_is_ascii(u_string):
     :rtype: bool
     """
     assert isinstance(u_string, str)
+    # 这个写法很有趣
     try:
         u_string.encode('ascii')
         return True

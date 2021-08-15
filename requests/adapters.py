@@ -43,6 +43,7 @@ from .auth import _basic_auth_str
 try:
     from urllib3.contrib.socks import SOCKSProxyManager
 except ImportError:
+    # DISCUSS 为什么使用def？
     def SOCKSProxyManager(*args, **kwargs):
         raise InvalidSchema("Missing dependencies for SOCKS support.")
 
@@ -118,10 +119,13 @@ class HTTPAdapter(BaseAdapter):
         else:
             self.max_retries = Retry.from_int(max_retries)
         self.config = {}
+        #  DISCUSS 不在上面的attrs里面？
         self.proxy_manager = {}
 
+        #  DISCUSS 为什么此时执行父类初始化？
         super(HTTPAdapter, self).__init__()
 
+        # DISCUSS init_poolmanager里面也执行了，为何重复？
         self._pool_connections = pool_connections
         self._pool_maxsize = pool_maxsize
         self._pool_block = pool_block

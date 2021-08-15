@@ -277,6 +277,8 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
     should not be instantiated manually; doing so may produce undesirable
     effects.
 
+    只能用子类实例化
+
     Usage::
 
       >>> import requests
@@ -319,6 +321,7 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
         self.prepare_body(data, files, json)
         self.prepare_auth(auth, url)
 
+        # DISCUSS why?
         # Note that prepare_auth must be last to enable authentication schemes
         # such as OAuth to work on a fully prepared request.
 
@@ -355,6 +358,7 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
             raise UnicodeError
         return host
 
+    # PreparedRequest准备url
     def prepare_url(self, url, params):
         """Prepares the given HTTP URL."""
         #: Accept objects that have string representations.
@@ -379,6 +383,7 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
 
         # Support for unicode domain names and paths.
         try:
+            # urllib3解析url的方法
             scheme, auth, host, port, path, query, fragment = parse_url(url)
         except LocationParseError as e:
             raise InvalidURL(*e.args)
@@ -447,6 +452,7 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
         self.headers = CaseInsensitiveDict()
         if headers:
             for header in headers.items():
+                # 每一个header都是tuple
                 # Raise exception on invalid header value.
                 check_header_validity(header)
                 name, value = header

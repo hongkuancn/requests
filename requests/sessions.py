@@ -93,6 +93,7 @@ def merge_hooks(request_hooks, session_hooks, dict_class=OrderedDict):
     return merge_setting(request_hooks, session_hooks, dict_class)
 
 
+# TODO 有点复杂，还没有看
 class SessionRedirectMixin(object):
 
     def get_redirect_target(self, resp):
@@ -444,6 +445,7 @@ class Session(SessionRedirectMixin):
             cookies = cookiejar_from_dict(cookies)
 
         # Merge with session cookies
+        # session和request的cookie进行合并
         merged_cookies = merge_cookies(
             merge_cookies(RequestsCookieJar(), self.cookies), cookies)
 
