@@ -288,6 +288,7 @@ class HTTPAdapter(BaseAdapter):
         extract_cookies_to_jar(response.cookies, req, resp)
 
         # Give the Response some context.
+        # DISCUSS 不理解作用
         response.request = req
         response.connection = self
 
@@ -413,10 +414,12 @@ class HTTPAdapter(BaseAdapter):
         """
 
         try:
+            # 建立连接，使用urllib3，返回HTTPConnectionPool
             conn = self.get_connection(request.url, proxies)
         except LocationValueError as e:
             raise InvalidURL(e, request=request)
 
+        # 校验证书
         self.cert_verify(conn, request.url, verify, cert)
         url = self.request_url(request, proxies)
         self.add_headers(request, stream=stream, timeout=timeout, verify=verify, cert=cert, proxies=proxies)
@@ -455,6 +458,7 @@ class HTTPAdapter(BaseAdapter):
 
             # Send the request.
             else:
+                # DISCUSS chunked没有详细看
                 if hasattr(conn, 'proxy_pool'):
                     conn = conn.proxy_pool
 

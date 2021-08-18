@@ -83,6 +83,8 @@ class RequestEncodingMixin(object):
     def _encode_params(data):
         """Encode parameters in a piece of data.
 
+        和encode_file中的一部分一样
+
         Will successfully encode parameters when passed as a dict or a list of
         2-tuples. Order is retained if data is a list of 2-tuples but arbitrary
         if parameters are supplied as a dict.
@@ -109,6 +111,8 @@ class RequestEncodingMixin(object):
     @staticmethod
     def _encode_files(files, data):
         """Build the body for a multipart/form-data request.
+
+        把data转成bytes组装在request中
 
         Will successfully encode files when passed as a dict or a list of
         tuples. Order is retained if data is a list of tuples but arbitrary
@@ -148,6 +152,7 @@ class RequestEncodingMixin(object):
                 elif len(v) == 3:
                     fn, fp, ft = v
                 else:
+                    # (filename, fileobj, contentype, custom_headers)
                     fn, fp, ft, fh = v
             else:
                 fn = guess_filename(v) or k
@@ -481,12 +486,14 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
             if not isinstance(body, bytes):
                 body = body.encode('utf-8')
 
+        # DISCUSS 成立条件？
         is_stream = all([
             hasattr(data, '__iter__'),
             not isinstance(data, (basestring, list, tuple, Mapping))
         ])
 
         if is_stream:
+            # DISCUSS 没有理解
             try:
                 length = super_len(data)
             except (TypeError, AttributeError, UnsupportedOperation):
@@ -511,6 +518,7 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
             if length:
                 self.headers['Content-Length'] = builtin_str(length)
             else:
+                # 没有确切的长度的情况
                 self.headers['Transfer-Encoding'] = 'chunked'
         else:
             # Multi-part file uploads.
@@ -562,6 +570,7 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
             r = auth(self)
 
             # Update self to reflect the auth changes.
+            # DISCUSS 这行代码有必要吗？
             self.__dict__.update(r.__dict__)
 
             # Recompute Content-Length
