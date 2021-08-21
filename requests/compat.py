@@ -52,7 +52,7 @@ if is_py2:
 
     builtin_str = str
     bytes = str
-    # DISCUSS unicode来自哪里
+    # WHY unicode来自哪里
     str = unicode
     basestring = basestring
     numeric_types = (int, long, float)

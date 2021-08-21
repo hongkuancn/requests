@@ -437,6 +437,10 @@ class Session(SessionRedirectMixin):
         :param request: :class:`Request` instance to prepare with this
             session's settings.
         :rtype: requests.PreparedRequest
+
+        session去prepare_request的时候，参数是request，创建了新的PreparedRequest（而不是创建Request，Request的prepare只在test中直接使用了，在这个库内部，没有使用），然后调用了prepare函数
+
+
         """
         cookies = request.cookies or {}
 
@@ -454,6 +458,7 @@ class Session(SessionRedirectMixin):
         if self.trust_env and not auth and not self.auth:
             auth = get_netrc_auth(request.url)
 
+        # Request的prepare只在test中直接使用了，在这个库内部没有使用
         p = PreparedRequest()
         p.prepare(
             method=request.method.upper(),

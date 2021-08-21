@@ -16,6 +16,7 @@ class RequestException(IOError):
 
     def __init__(self, *args, **kwargs):
         """Initialize RequestException with `request` and `response` objects."""
+        # WHY 等价于 self.response = None，别致的写法
         response = kwargs.pop('response', None)
         self.response = response
         self.request = kwargs.pop('request', None)

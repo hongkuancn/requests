@@ -16,7 +16,7 @@ class VersionedPackage(object):
     def __init__(self, version):
         self.__version__ = version
 
-
+# WHY mocker在哪里定义的？
 def test_idna_without_version_attribute(mocker):
     """Older versions of IDNA don't provide a __version__ attribute, verify
     that if we have such a package, we don't blow up.

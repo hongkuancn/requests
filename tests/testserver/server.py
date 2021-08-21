@@ -5,7 +5,9 @@ import socket
 import select
 
 
+# 只是得到了请求的内容，没有进行处理
 def consume_socket_content(sock, timeout=0.5):
+    # buffer size
     chunks = 65536
     content = b''
 
@@ -41,6 +43,7 @@ class Server(threading.Thread):
         self.ready_event = threading.Event()
         self.stop_event = threading.Event()
 
+    # 这里相当于是一个Server的例子，用来进行text_response，handler是个内部函数，还可以制作其他功能的server
     @classmethod
     def text_response_server(cls, text, request_timeout=0.5, **kwargs):
         def text_response_handler(sock):
@@ -52,6 +55,7 @@ class Server(threading.Thread):
 
         return Server(text_response_handler, **kwargs)
 
+    # text_response_server的使用
     @classmethod
     def basic_response_server(cls, **kwargs):
         return cls.text_response_server(
@@ -65,6 +69,7 @@ class Server(threading.Thread):
             self.server_sock = self._create_socket_and_bind()
             # in case self.port = 0
             self.port = self.server_sock.getsockname()[1]
+            # WHY event set的使用，之后再看
             self.ready_event.set()
             self._handle_requests()
 
@@ -78,6 +83,7 @@ class Server(threading.Thread):
     def _create_socket_and_bind(self):
         sock = socket.socket()
         sock.bind((self.host, self.port))
+        # 0 代表backlog
         sock.listen(0)
         return sock
 
@@ -100,6 +106,7 @@ class Server(threading.Thread):
 
     def _accept_connection(self):
         try:
+            # WHY 之后详细看select
             ready, _, _ = select.select([self.server_sock], [], [], self.WAIT_EVENT_TIMEOUT)
             if not ready:
                 return None
@@ -108,7 +115,9 @@ class Server(threading.Thread):
         except (select.error, socket.error):
             return None
 
+    # 用于使用with关键字
     def __enter__(self):
+        # 执行run方法
         self.start()
         self.ready_event.wait(self.WAIT_EVENT_TIMEOUT)
         return self.host, self.port

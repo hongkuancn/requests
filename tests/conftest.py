@@ -26,6 +26,7 @@ def prepare_url(value):
     return inner
 
 
+# WHY 没有明白参数httpbin是在哪里赋值的，port此时就会有值。这个方法会在test前执行。
 @pytest.fixture
 def httpbin(httpbin):
     return prepare_url(httpbin)

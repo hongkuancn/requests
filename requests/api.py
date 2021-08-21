@@ -57,6 +57,7 @@ def request(method, url, **kwargs):
     # By using the 'with' statement we are sure the session is closed, thus we
     # avoid leaving sockets open which can trigger a ResourceWarning in some
     # cases, and look like a memory leak in others.
+    # session创建过程设置许多header内容
     with sessions.Session() as session:
         return session.request(method=method, url=url, **kwargs)
 

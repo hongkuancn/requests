@@ -18,6 +18,7 @@ class TestCaseInsensitiveDict:
 
     possible_keys = pytest.mark.parametrize('key', ('accept', 'ACCEPT', 'aCcEpT', 'Accept'))
 
+    # GOOD 设置参数key的方式是 @possible_keys
     @possible_keys
     def test_getitem(self, key):
         assert self.case_insensitive_dict[key] == 'application/json'
@@ -46,6 +47,7 @@ class TestCaseInsensitiveDict:
         )
     )
     def test_instance_equality(self, other, result):
+        print(other)
         assert (self.case_insensitive_dict == other) is result
 
 

@@ -860,10 +860,12 @@ def parse_header_links(value):
 
     replace_chars = ' \'"'
 
+    # 去除所有的单引号和双引号
     value = value.strip(replace_chars)
     if not value:
         return links
 
+    # WHY 例子不清楚
     for val in re.split(', *<', value):
         try:
             url, params = val.split(';', 1)
@@ -891,6 +893,7 @@ _null2 = _null * 2
 _null3 = _null * 3
 
 
+# 通过str起始的null数量，确定encoding的种类
 def guess_json_utf(data):
     """
     :rtype: str

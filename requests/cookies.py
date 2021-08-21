@@ -172,6 +172,8 @@ class RequestsCookieJar(cookielib.CookieJar, MutableMapping):
     """Compatibility class; is a cookielib.CookieJar, but exposes a dict
     interface.
 
+    dict接口只为外部client代码兼容，并没有被requests使用
+
     This is the CookieJar we create by default for requests and sessions that
     don't specify one, since some clients may expect response.cookies and
     session.cookies to support dict operations.
@@ -182,6 +184,8 @@ class RequestsCookieJar(cookielib.CookieJar, MutableMapping):
     ``LWPCookieJar`` and ``FileCookieJar``.
 
     Unlike a regular CookieJar, this class is pickleable.
+
+    可序列化的
 
     .. warning:: dictionary operations that are normally O(1) may be O(n).
     """

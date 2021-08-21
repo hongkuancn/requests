@@ -200,6 +200,7 @@ class RequestHooksMixin(object):
             return False
 
 
+# 没有继承PreparedRequest
 class Request(RequestHooksMixin):
     """A user-created :class:`Request <Request>` object.
 
@@ -319,6 +320,7 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
             params=None, auth=None, cookies=None, hooks=None, json=None):
         """Prepares the entire request with the given parameters."""
 
+        # 建造者模式？
         self.prepare_method(method)
         self.prepare_url(url, params)
         self.prepare_headers(headers)
@@ -326,7 +328,7 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
         self.prepare_body(data, files, json)
         self.prepare_auth(auth, url)
 
-        # DISCUSS why?
+        # WHY why?
         # Note that prepare_auth must be last to enable authentication schemes
         # such as OAuth to work on a fully prepared request.
 
@@ -486,14 +488,14 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
             if not isinstance(body, bytes):
                 body = body.encode('utf-8')
 
-        # DISCUSS 成立条件？
+        # WHY 成立条件？
         is_stream = all([
             hasattr(data, '__iter__'),
             not isinstance(data, (basestring, list, tuple, Mapping))
         ])
 
         if is_stream:
-            # DISCUSS 没有理解
+            # WHY 没有理解
             try:
                 length = super_len(data)
             except (TypeError, AttributeError, UnsupportedOperation):
@@ -570,7 +572,7 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
             r = auth(self)
 
             # Update self to reflect the auth changes.
-            # DISCUSS 这行代码有必要吗？
+            # WHY 这行代码有必要吗？
             self.__dict__.update(r.__dict__)
 
             # Recompute Content-Length
@@ -651,6 +653,7 @@ class Response(object):
         #: A CookieJar of Cookies the server sent back.
         self.cookies = cookiejar_from_dict({})
 
+        '''注意这个过程的起始，从发送第一个byte到完成对header的解析'''
         #: The amount of time elapsed between sending the request
         #: and the arrival of the response (as a timedelta).
         #: This property specifically measures the time taken between sending
@@ -716,6 +719,8 @@ class Response(object):
     def ok(self):
         """Returns True if :attr:`status_code` is less than 400, False if not.
 
+        是不是小于400
+
         This attribute checks if the status code of the response is between
         400 and 600 to see if there was a client error or a server error. If
         the status code is between 200 and 400, this will return True. This
@@ -749,6 +754,7 @@ class Response(object):
         """The apparent encoding, provided by the charset_normalizer or chardet libraries."""
         return chardet.detect(self.content)['encoding']
 
+    # WHY 没有理解
     def iter_content(self, chunk_size=1, decode_unicode=False):
         """Iterates over the response data.  When stream=True is set on the
         request, this avoids reading the content at once into memory for
@@ -876,6 +882,7 @@ class Response(object):
             return str('')
 
         # Fallback to auto-detected encoding.
+        # 如果不知道什么encoding，则自动探测
         if self.encoding is None:
             encoding = self.apparent_encoding
 
