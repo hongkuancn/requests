@@ -62,6 +62,7 @@ def _basic_auth_str(username, password):
     if isinstance(password, str):
         password = password.encode('latin1')
 
+    # byte string的拼接，这样的话对于入参是byte string的情况也进行了兼容
     authstr = 'Basic ' + to_native_string(
         b64encode(b':'.join((username, password))).strip()
     )

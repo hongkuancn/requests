@@ -27,6 +27,7 @@ def prepare_url(value):
 
 
 # WHY 没有明白参数httpbin是在哪里赋值的，port此时就会有值。这个方法会在test前执行。
+# 似乎是在env/lib/python3.8/site-packages/pytest_httpbin/plugin.py执行的
 @pytest.fixture
 def httpbin(httpbin):
     return prepare_url(httpbin)
