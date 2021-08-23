@@ -95,6 +95,7 @@ class TestRequests:
         assert pr.url == req.url
         assert pr.body == 'life=42'
 
+    # GET和HEAD请求不能有body，所以不加content-length字段
     @pytest.mark.parametrize('method', ('GET', 'HEAD'))
     def test_no_content_length(self, httpbin, method):
         req = requests.Request(method, httpbin(method.lower())).prepare()
@@ -110,6 +111,7 @@ class TestRequests:
         req = requests.Request(method, httpbin(method.lower()), data='').prepare()
         assert req.headers['Content-Length'] == '0'
 
+    # WHY 意义在哪儿
     def test_override_content_length(self, httpbin):
         headers = {
             'Content-Length': 'not zero'
@@ -139,6 +141,7 @@ class TestRequests:
         prep = session.prepare_request(request)
         assert prep.url == 'http://example.com/?z=1&a=1&k=1&d=1'
 
+    # prepare_url先检查params的类型是不是bytes
     def test_params_bytes_are_encoded(self):
         request = requests.Request('GET', 'http://example.com',
                                    params=b'test=foo').prepare()
@@ -513,6 +516,7 @@ class TestRequests:
 
         assert p.headers['Authorization'] == _basic_auth_str(username, password)
 
+    # 我的理解错误的MR https://github.com/psf/requests/pull/5908
     def test_basicauth_encodes_byte_strings(self):
         """Ensure b'test' formats as the byte string "test" rather
         than the unicode string "b'test'" in Python 3.
