@@ -120,6 +120,7 @@ class TestRequests:
         assert 'Content-Length' in r.headers
         assert r.headers['Content-Length'] == 'not zero'
 
+    # 核心是urllib3的parse_url方法的_encode_invalid_chars
     def test_path_is_not_double_encoded(self):
         request = requests.Request('GET', "http://0.0.0.0/get/test case").prepare()
 
@@ -167,6 +168,8 @@ class TestRequests:
         r = s.send(r.prepare())
         assert r.status_code == 200, 'failed for scheme {}'.format(scheme)
 
+    # WHY 和requests.get()不是一样吗？
+    # r = requests.get(httpbin('get'))
     def test_HTTP_200_OK_GET_ALTERNATIVE(self, httpbin):
         r = requests.Request('GET', httpbin('get'))
         s = requests.Session()

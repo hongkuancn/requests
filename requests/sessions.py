@@ -148,6 +148,7 @@ class SessionRedirectMixin(object):
 
         hist = []  # keep track of history
 
+        # response.headers['location']里面的内容
         url = self.get_redirect_target(resp)
         previous_fragment = urlparse(req.url).fragment
         while url:
@@ -159,6 +160,7 @@ class SessionRedirectMixin(object):
             resp.history = hist[1:]
 
             try:
+                # WHY
                 resp.content  # Consume socket so it can be released
             except (ChunkedEncodingError, ContentDecodingError, RuntimeError):
                 resp.raw.read(decode_content=False)
