@@ -287,6 +287,7 @@ class TestRequests:
     def test_transfer_enc_removal_on_redirect(self, httpbin):
         purged_headers = ('Transfer-Encoding', 'Content-Type')
         ses = requests.Session()
+        # b'x' for x in range(1) 会生成generator，所以body的长度不定，Transfer-Encoding会赋值chunked
         req = requests.Request('POST', httpbin('post'), data=(b'x' for x in range(1)))
         prep = ses.prepare_request(req)
         assert 'Transfer-Encoding' in prep.headers

@@ -144,14 +144,19 @@ class SessionRedirectMixin(object):
 
     def resolve_redirects(self, resp, req, stream=False, timeout=None,
                           verify=True, cert=None, proxies=None, yield_requests=False, **adapter_kwargs):
-        """Receives a Response. Returns a generator of Responses or Requests."""
+        """Receives a Response. Returns a generator of Responses or Requests.
+
+        处理redirect，重新组装request
+        """
 
         hist = []  # keep track of history
 
         # response.headers['location']里面的内容
         url = self.get_redirect_target(resp)
         previous_fragment = urlparse(req.url).fragment
+        # WHY 用if应该是不可以，为什么不可以
         while url:
+            # 可以把原来的body内容copy过来
             prepared_request = req.copy()
 
             # Update history and keep track of redirects.
@@ -197,6 +202,7 @@ class SessionRedirectMixin(object):
             self.rebuild_method(prepared_request, resp)
 
             # https://github.com/psf/requests/issues/1084
+            # 307 308
             if resp.status_code not in (codes.temporary_redirect, codes.permanent_redirect):
                 # https://github.com/psf/requests/issues/3490
                 purged_headers = ('Content-Length', 'Content-Type', 'Transfer-Encoding')
@@ -236,7 +242,7 @@ class SessionRedirectMixin(object):
             if yield_requests:
                 yield req
             else:
-
+                # 递归调用
                 resp = self.send(
                     req,
                     stream=stream,
@@ -244,6 +250,7 @@ class SessionRedirectMixin(object):
                     verify=verify,
                     cert=cert,
                     proxies=proxies,
+                    # 注意这个allow是false
                     allow_redirects=False,
                     **adapter_kwargs
                 )
@@ -689,6 +696,7 @@ class Session(SessionRedirectMixin):
 
         # Shuffle things around if there's history.
         if history:
+            # GOOD 这块有点意思
             # Insert the first (original) request at the start
             history.insert(0, r)
             # Get the last request made
