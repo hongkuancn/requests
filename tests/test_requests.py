@@ -334,12 +334,14 @@ class TestRequests:
         s = requests.session()
         url = httpbin('cookies/set?foo=bar')
         s.get(url)
+        # session的cookie会变化，response的header返回的是set-cookie，与下面对比
         assert s.cookies['foo'] == 'bar'
 
     def test_cookie_sent_on_redirect(self, httpbin):
         s = requests.session()
         s.get(httpbin('cookies/set?foo=bar'))
         r = s.get(httpbin('redirect/1'))  # redirects to httpbin('get')
+        # WHY r的header里面没有Cookie字段，r.json()里面有
         assert 'Cookie' in r.json()['headers']
 
     def test_cookie_removed_on_expire(self, httpbin):
