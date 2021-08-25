@@ -614,6 +614,7 @@ class TestRequests:
         try:
             def get_netrc_auth_mock(url):
                 return auth
+            # GOOD 把utils中的get_netrc_auth方法替换成get_netrc_auth_mock，就不会触发兜底读取netrc文件了，而是直接读取auth
             requests.sessions.get_netrc_auth = get_netrc_auth_mock
 
             # Should use netrc and work.

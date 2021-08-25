@@ -232,6 +232,7 @@ class HTTPDigestAuth(AuthBase):
         if r.is_redirect:
             self._thread_local.num_401_calls = 1
 
+    # WHY 有时间可以详细看看
     def handle_401(self, r, **kwargs):
         """
         Takes the given response and tries digest-auth, if needed.

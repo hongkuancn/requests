@@ -556,7 +556,10 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
             self.headers['Content-Length'] = '0'
 
     def prepare_auth(self, auth, url=''):
-        """Prepares the given HTTP auth data."""
+        """Prepares the given HTTP auth data.
+
+        添加authentication header
+        """
 
         # If no Auth is explicitly provided, extract it from the URL first.
         if auth is None:
@@ -572,7 +575,7 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
             r = auth(self)
 
             # Update self to reflect the auth changes.
-            # WHY 这行代码有必要吗？
+            # WHY 这行代码有必要吗？对于DigestAuth，似乎会有变化
             self.__dict__.update(r.__dict__)
 
             # Recompute Content-Length

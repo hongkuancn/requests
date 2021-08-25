@@ -468,6 +468,7 @@ class Session(SessionRedirectMixin):
             auth = get_netrc_auth(request.url)
 
         # Request的prepare只在test中直接使用了，在这个库内部没有使用
+        # 这里merge_setting把request和session的setting合并了
         p = PreparedRequest()
         p.prepare(
             method=request.method.upper(),

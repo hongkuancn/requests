@@ -332,6 +332,7 @@ class HTTPAdapter(BaseAdapter):
         for proxy in self.proxy_manager.values():
             proxy.clear()
 
+    # WHY 如果有proxy，如何得到真正的url
     def request_url(self, request, proxies):
         """Obtain the url to use when making the final request.
 
