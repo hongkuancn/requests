@@ -522,6 +522,7 @@ class HTTPAdapter(BaseAdapter):
                 # This branch is for urllib3 v1.22 and later.
                 raise SSLError(e, request=request)
 
+            # test_errors测试的报错在这里
             raise ConnectionError(e, request=request)
 
         except ClosedPoolError as e:

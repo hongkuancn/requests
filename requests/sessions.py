@@ -684,6 +684,7 @@ class Session(SessionRedirectMixin):
             for resp in r.history:
                 extract_cookies_to_jar(self.cookies, resp.request, resp.raw)
 
+        # session的cookie添加了返回的set-cookie
         extract_cookies_to_jar(self.cookies, request, r.raw)
 
         # Resolve redirects if allowed.

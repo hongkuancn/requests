@@ -380,6 +380,7 @@ class TestRequests:
         s = requests.session()
         s.get(httpbin('cookies'), cookies={'foo': 'baz'})
         # Sending a request with cookies should not add cookies to the session
+        # 因为没有set-cookie
         assert not s.cookies
 
     def test_generic_cookiejar_works(self, httpbin):
@@ -401,6 +402,7 @@ class TestRequests:
         # Make sure the cookie was sent
         assert r.json()['cookies']['foo'] == 'bar'
 
+    # WHY
     def test_cookielib_cookiejar_on_redirect(self, httpbin):
         """Tests resolve_redirect doesn't fail when merging cookies
         with non-RequestsCookieJar cookiejar.
@@ -552,6 +554,7 @@ class TestRequests:
             requests.get('http://localhost:1', proxies={'http': 'non-resolvable-address'})
 
     def test_proxy_error_on_bad_url(self, httpbin, httpbin_secure):
+        # WHY InvalidProxyURL是InvalidURL的子类，抛出的错误实际是InvalidURL
         with pytest.raises(InvalidProxyURL):
             requests.get(httpbin_secure(), proxies={'https': 'http:/badproxyurl:3128'})
 
@@ -565,11 +568,12 @@ class TestRequests:
             requests.get(httpbin(), proxies={'http': 'http:///example.com:8080'})
 
     def test_respect_proxy_env_on_send_self_prepared_request(self, httpbin):
+        # WHY 没看出来这句话的作用
         with override_environ(http_proxy=INVALID_PROXY):
             with pytest.raises(ProxyError):
                 session = requests.Session()
-                request = requests.Request('GET', httpbin())
-                session.send(request.prepare())
+                request = requests.Request('GET', httpbin()).prepare()
+                session.send(request)
 
     def test_respect_proxy_env_on_send_session_prepared_request(self, httpbin):
         with override_environ(http_proxy=INVALID_PROXY):
