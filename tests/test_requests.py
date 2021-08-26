@@ -826,6 +826,7 @@ class TestRequests:
         assert found_json == {'some': 'data'}
 
     def test_conflicting_post_params(self, httpbin):
+        # files有值，会进入encode_files，files无值，会进入encode_params
         url = httpbin('post')
         with open('requirements-dev.txt') as f:
             with pytest.raises(ValueError):
@@ -846,6 +847,7 @@ class TestRequests:
         assert not r.ok
 
     def test_decompress_gzip(self, httpbin):
+        # urllib3解压缩，不是requests解压缩
         r = requests.get(httpbin('gzip'))
         r.content.decode('ascii')
 
@@ -867,6 +869,7 @@ class TestRequests:
             data='\xff')  # compat.str is unicode.
 
     def test_pyopenssl_redirect(self, httpbin_secure, httpbin_ca_bundle):
+        # WHY 301 转发 302 转发 200
         requests.get(httpbin_secure('status', '301'), verify=httpbin_ca_bundle)
 
     def test_invalid_ca_certificate_path(self, httpbin_secure):

@@ -171,6 +171,7 @@ class RequestEncodingMixin(object):
             rf.make_multipart(content_type=ft)
             new_fields.append(rf)
 
+        # urllib3的方法，把每个field都转成RequestField
         body, content_type = encode_multipart_formdata(new_fields)
 
         return body, content_type
@@ -525,6 +526,7 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
         else:
             # Multi-part file uploads.
             if files:
+                # 如果files和data都有，则先包括data内容，然后是files
                 (body, content_type) = self._encode_files(files, data)
             else:
                 if data:
