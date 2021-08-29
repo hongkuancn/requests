@@ -205,6 +205,8 @@ class HTTPAdapter(BaseAdapter):
 
         return manager
 
+    # 如果是https，就需要verify或者cert进行校验
+    # 默认的CA Bundle地址 '/Users/wanghongkuan/Documents/CS/sourcecode/requests/env/lib/python3.7/site-packages/certifi/cacert.pem'
     def cert_verify(self, conn, url, verify, cert):
         """Verify a SSL certificate. This method should not be called from user
         code, and is only exposed for use when subclassing the

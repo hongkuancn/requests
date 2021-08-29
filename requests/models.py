@@ -804,6 +804,7 @@ class Response(object):
         elif chunk_size is not None and not isinstance(chunk_size, int):
             raise TypeError("chunk_size must be an int, it is instead a %s." % type(chunk_size))
         # simulate reading small chunks of the content
+        # 每次读取chunk_size的长度
         reused_chunks = iter_slices(self._content, chunk_size)
 
         stream_chunks = generate()

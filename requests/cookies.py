@@ -406,6 +406,7 @@ class RequestsCookieJar(cookielib.CookieJar, MutableMapping):
         """Unlike a normal CookieJar, this class is pickleable."""
         state = self.__dict__.copy()
         # remove the unpickleable RLock object
+        # WHY cookie用锁，response里面没有锁，request没有找到这个方法
         state.pop('_cookies_lock')
         return state
 

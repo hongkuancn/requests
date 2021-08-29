@@ -712,6 +712,8 @@ class Session(SessionRedirectMixin):
             except StopIteration:
                 pass
 
+        # stream决定是否立刻下载response的内容
+        # content里面调用了iter_content，会消费response的内容，则_consume_content会为true
         if not stream:
             r.content
 

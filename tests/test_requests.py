@@ -918,8 +918,10 @@ class TestRequests:
         When underlying SSL problems occur, an SSLError is raised.
         """
         with pytest.raises(SSLError):
+            # WHY 如何查看本地server的CA？
             # Our local httpbin does not have a trusted CA, so this call will
             # fail if we use our default trust bundle.
+            # GOOD 默认trust bundle在'/Users/wanghongkuan/Documents/CS/sourcecode/requests/env/lib/python3.7/site-packages/certifi/cacert.pem'
             requests.get(httpbin_secure('status', '200'))
 
     def test_urlencoded_get_query_multivalued_param(self, httpbin):
@@ -1327,6 +1329,7 @@ class TestRequests:
         with pytest.raises(TypeError):
             chunks = r.iter_content("1024")
 
+    # response有__getstate__，所以是pickleable的。没有理解为什么PreparedRequest也是pickleable的？因为都是原生python类型，object，本就支持pickleable
     def test_request_and_response_are_pickleable(self, httpbin):
         r = requests.get(httpbin('get'))
 
@@ -1424,6 +1427,7 @@ class TestRequests:
     def test_uppercase_scheme_redirect(self, httpbin):
         parts = urlparse(httpbin('html'))
         url = "HTTP://" + parts.netloc + parts.path
+        # resolve中的urlparse会normalize
         r = requests.get(httpbin('redirect-to'), params={'url': url})
         assert r.status_code == 200
         assert r.url.lower() == url.lower()
@@ -1776,6 +1780,7 @@ class TestRequests:
 
         assert 'error occurred when rewinding request body' in str(e)
 
+    # WHY 有问题？和test_rewind_body_no_seek区别是什么？
     def test_rewind_body_failed_tell(self):
         class BadFileObj:
             def __init__(self, data):
@@ -1810,6 +1815,7 @@ class TestRequests:
 
         adapter.build_response = build_response
 
+    # WHY 没有完全理解用意
     def test_redirect_with_wrong_gzipped_header(self, httpbin):
         s = requests.Session()
         url = httpbin('redirect/1')
@@ -1843,6 +1849,8 @@ class TestRequests:
         assert 'application/json' in r.request.headers['Content-Type']
         assert {'life': 42} == r.json()['json']
 
+    # 传入data，request.body 'stuff=elixr', 不是dict的形式
+    # 传入json，request.body  b'{"life": 42}'
     def test_json_param_post_should_not_override_data_param(self, httpbin):
         r = requests.Request(method='POST', url=httpbin('post'),
                              data={'stuff': 'elixr'},
@@ -1870,9 +1878,11 @@ class TestRequests:
         with contextlib.closing(s.get(httpbin('stream/4'), stream=True)) as response:
             pass
 
+        # 即便没有被消费，raw.closed也是True，这是由URLlib3控制的
         assert response._content_consumed is False
         assert response.raw.closed
 
+    # WHY 不理解
     @pytest.mark.xfail
     def test_response_iter_lines_reentrant(self, httpbin):
         """Response.iter_lines() is not reentrant safe"""
@@ -1882,6 +1892,7 @@ class TestRequests:
         next(r.iter_lines())
         assert len(list(r.iter_lines())) == 3
 
+    # WHY 没明白
     def test_session_close_proxy_clear(self, mocker):
         proxies = {
           'one': mocker.Mock(),
@@ -1937,6 +1948,7 @@ class TestRequests:
         assert 'Content-Length' not in prepared_request.headers
 
     def test_stream_with_auth_does_not_set_transfer_encoding_header(self, httpbin):
+        # WHY 没有理解注释的含义
         """Ensure that a byte stream with size > 0 will not set both a Content-Length
         and Transfer-Encoding header.
         """
