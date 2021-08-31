@@ -43,7 +43,7 @@ from .auth import _basic_auth_str
 try:
     from urllib3.contrib.socks import SOCKSProxyManager
 except ImportError:
-    # WHY 为什么使用def？
+    # Answer 为什么使用def？只是定义了一个方法
     def SOCKSProxyManager(*args, **kwargs):
         raise InvalidSchema("Missing dependencies for SOCKS support.")
 
@@ -108,6 +108,8 @@ class HTTPAdapter(BaseAdapter):
       >>> a = requests.adapters.HTTPAdapter(max_retries=3)
       >>> s.mount('http://', a)
     """
+
+    # __attrs__一般只在__getstate__里用，不是一个标准用法
     __attrs__ = ['max_retries', 'config', '_pool_connections', '_pool_maxsize',
                  '_pool_block']
 
@@ -119,7 +121,7 @@ class HTTPAdapter(BaseAdapter):
         else:
             self.max_retries = Retry.from_int(max_retries)
         self.config = {}
-        #  WHY 不在上面的attrs里面？
+        #  Answer 不在上面的attrs里面？因为self.poolmanager使用了lambda function, which isn't pickleable.
         self.proxy_manager = {}
 
         #  WHY 为什么此时执行父类初始化？
@@ -291,7 +293,7 @@ class HTTPAdapter(BaseAdapter):
         extract_cookies_to_jar(response.cookies, req, resp)
 
         # Give the Response some context.
-        # WHY 不理解作用
+        # Answer 不理解作用？response也记录connection
         response.request = req
         response.connection = self
 
