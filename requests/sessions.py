@@ -93,7 +93,6 @@ def merge_hooks(request_hooks, session_hooks, dict_class=OrderedDict):
     return merge_setting(request_hooks, session_hooks, dict_class)
 
 
-# TODO 有点复杂，还没有看
 class SessionRedirectMixin(object):
 
     def get_redirect_target(self, resp):
@@ -154,7 +153,7 @@ class SessionRedirectMixin(object):
         # response.headers['location']里面的内容
         url = self.get_redirect_target(resp)
         previous_fragment = urlparse(req.url).fragment
-        # WHY 用if应该是不可以，为什么不可以
+        # Answer 用if应该是不可以，为什么不可以? 多次redirect，hist的内容会全部保留
         while url:
             # 可以把原来的body内容copy过来
             prepared_request = req.copy()
@@ -165,7 +164,6 @@ class SessionRedirectMixin(object):
             resp.history = hist[1:]
 
             try:
-                # WHY
                 resp.content  # Consume socket so it can be released
             except (ChunkedEncodingError, ContentDecodingError, RuntimeError):
                 resp.raw.read(decode_content=False)

@@ -329,7 +329,6 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
         self.prepare_body(data, files, json)
         self.prepare_auth(auth, url)
 
-        # WHY why?
         # Note that prepare_auth must be last to enable authentication schemes
         # such as OAuth to work on a fully prepared request.
 
@@ -759,7 +758,6 @@ class Response(object):
         """The apparent encoding, provided by the charset_normalizer or chardet libraries."""
         return chardet.detect(self.content)['encoding']
 
-    # WHY 没有理解
     def iter_content(self, chunk_size=1, decode_unicode=False):
         """Iterates over the response data.  When stream=True is set on the
         request, this avoids reading the content at once into memory for

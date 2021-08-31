@@ -336,7 +336,7 @@ class HTTPAdapter(BaseAdapter):
         for proxy in self.proxy_manager.values():
             proxy.clear()
 
-    # WHY 如果有proxy，如何得到真正的url
+    # 如果有proxy，如何得到真正的url
     def request_url(self, request, proxies):
         """Obtain the url to use when making the final request.
 
@@ -464,7 +464,6 @@ class HTTPAdapter(BaseAdapter):
 
             # Send the request.
             else:
-                # WHY chunked没有详细看
                 if hasattr(conn, 'proxy_pool'):
                     conn = conn.proxy_pool
 
@@ -480,6 +479,10 @@ class HTTPAdapter(BaseAdapter):
 
                     low_conn.endheaders()
 
+                    # chunked发送方式
+                    # 4\r\n        (bytes to send)
+                    # Wiki\r\n     (data)
+                    # \r\n         (end message)
                     for i in request.body:
                         low_conn.send(hex(len(i))[2:].encode('utf-8'))
                         low_conn.send(b'\r\n')
